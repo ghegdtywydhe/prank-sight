@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>System Scan</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #0f0;
+      font-family: Consolas, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      transition: background 0.5s;
+    }
+    #box {
+      border: 2px solid #0f0;
+      padding: 30px;
+      max-width: 500px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #0f0;
+      color: black;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #revealScreen {
+      display: none;
+      font-size: 2.5rem;
+      color: white;
+    }
+    .explode {
+      animation: boom 0.6s ease-out forwards;
+    }
+    @keyframes boom {
+      0% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(2); filter: brightness(4); }
+      100% { transform: scale(0); filter: brightness(0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="box">
+    <h1>⚠ SYSTEM SCAN REQUIRED ⚠</h1>
+    <p>Click below to begin deep scan.</p>
+    <button id="scan">Start Scan</button>
+    <p id="output" style="display:none; margin-top:20px;"></p>
+  </div>
+
+  <div id="revealScreen">😂 HAHA YOU FELL FOR IT 😂</div>
+
+  <script>
+    const btn = document.getElementById("scan");
+    const out = document.getElementById("output");
+    const body = document.body;
+    const reveal = document.getElementById("revealScreen");
+    const box = document.getElementById("box");
+
+    // Create silly beep melody (safe + original)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playFunnyTune() {
+      const notes = [440, 660, 880, 660, 440, 330];
+      let t = audioCtx.currentTime;
+
+      notes.forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(0.2, t + i * 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.15 + 0.14);
+        osc.start(t + i * 0.15);
+        osc.stop(t + i * 0.15 + 0.14);
+      });
+    }
+
+    btn.onclick = () => {
+      btn.disabled = true;
+      btn.textContent = "Scanning...";
+
+      // Longer wait before virus message
+      setTimeout(() => {
+        out.style.display = "block";
+        out.textContent = "32 viruses detected.";
+      }, 3500);
+
+      // Play funny tune
+      setTimeout(() => {
+        playFunnyTune();
+      }, 4200);
+
+      // Fake explosion
+      setTimeout(() => {
+        box.classList.add("explode");
+        body.style.background = "red";
+      }, 5000);
+
+      // Final reveal
+      setTimeout(() => {
+        box.style.display = "none";
+        reveal.style.display = "block";
+        body.style.background = "black";
+      }, 5800);
+    };
+  </script>
+</body>
+</html>
